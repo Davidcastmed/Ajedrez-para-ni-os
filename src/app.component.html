@@ -1,0 +1,168 @@
+
+<div class="min-h-screen flex flex-col items-center justify-center p-4 text-gray-800">
+  <main class="bg-white/70 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-8 w-full max-w-6xl flex flex-col items-center">
+    
+    <header class="text-center mb-6">
+      <h1 class="text-4xl md:text-5xl font-bold text-sky-600 drop-shadow-md">Aprende Ajedrez Jugando</h1>
+      <p class="text-lg text-sky-800 mt-2">(edad de 5 a 12 años )</p>
+    </header>
+
+    <div class="w-full flex flex-wrap justify-center gap-4 mb-6 border-b-2 border-sky-200 pb-6">
+      @for (level of levels; track level.name; let i = $index) {
+        <button (click)="selectLevel(i)" class="flex flex-col items-center gap-2 p-3 rounded-2xl transition-all duration-300 transform hover:scale-105 w-24" [class.bg-sky-200]="chessService.currentLevelIndex() === i" [class.shadow-lg]="chessService.currentLevelIndex() === i" [class.hover:bg-sky-100]="chessService.currentLevelIndex() !== i && isLevelUnlocked(i)" [disabled]="!isLevelUnlocked(i)" [class.opacity-50]="!isLevelUnlocked(i)" [class.cursor-not-allowed]="!isLevelUnlocked(i)">
+            <div class="w-14 h-14 flex items-center justify-center drop-shadow-md">
+              @if(isLevelUnlocked(i)) {
+                @switch (level.piece) {
+                  @case ('knight') { <span class="material-symbols-outlined text-sky-800 !text-5xl">chess_knight</span> }
+                  @case ('rook') { <span class="material-symbols-outlined text-red-800 !text-5xl">chess_rook</span> }
+                  @case ('pawn') { <span class="material-symbols-outlined text-green-800 !text-5xl">chess_pawn</span> }
+                  @case ('bishop') { <span class="material-symbols-outlined text-purple-800 !text-5xl">chess_bishop</span> }
+                  @case ('queen') { <span class="material-symbols-outlined text-yellow-800 !text-5xl">chess_queen</span> }
+                  @case ('king') { <span class="material-symbols-outlined text-blue-800 !text-5xl">chess_king</span> }
+                }
+              } @else {
+                <span class="material-symbols-outlined text-gray-500 !text-5xl">lock</span>
+              }
+            </div>
+            <span class="font-semibold text-sky-800 text-sm text-center">{{ level.name }}</span>
+        </button>
+      }
+    </div>
+    
+    <div class="w-full grid grid-cols-1 lg:grid-cols-3 items-center justify-center gap-6">
+      <!-- Game Board -->
+      <div class="flex-shrink-0 lg:col-span-2 w-full max-w-xl mx-auto">
+        <app-board></app-board>
+      </div>
+      
+      <!-- Controls and Info -->
+      <div class="flex flex-col items-center lg:items-start gap-4 p-4 rounded-2xl bg-sky-50 border-2 border-sky-200 w-full max-w-sm lg:max-w-full mx-auto">
+        
+        <div class="w-full p-3 bg-sky-100 rounded-xl border-2 border-sky-200">
+          <h3 class="font-semibold text-sky-900 text-center lg:text-left mb-2">Cofre de Gemas</h3>
+          @if (collectedGems().length === 0) {
+            <p class="text-sm text-center lg:text-left text-sky-700">¡Gana partidas para llenarlo!</p>
+          } @else {
+            <div class="flex flex-wrap justify-center lg:justify-start gap-2">
+              @for(gem of collectedGems(); track $index) {
+                <img [src]="'https://unpkg.com/@google/angular-framework-assets@main/applet-assets/gems/' + gem + '.svg'" [alt]="gem" class="w-8 h-8"/>
+              }
+            </div>
+          }
+        </div>
+
+        <h2 class="text-2xl font-semibold text-amber-600">Mini-Juego</h2>
+        
+        <div class="flex flex-col items-center lg:items-start w-full">
+          <div class="flex items-center justify-center lg:justify-start space-x-2" aria-hidden="true">
+            <div class="w-10 h-10 flex items-center justify-center drop-shadow-md">
+              @switch (currentLevel().piece) {
+                  @case ('knight') { <span class="material-symbols-outlined text-sky-800 !text-4xl">chess_knight</span> }
+                  @case ('rook') { <span class="material-symbols-outlined text-red-800 !text-4xl">chess_rook</span> }
+                  @case ('pawn') { <span class="material-symbols-outlined text-green-800 !text-4xl">chess_pawn</span> }
+                  @case ('bishop') { <span class="material-symbols-outlined text-purple-800 !text-4xl">chess_bishop</span> }
+                  @case ('queen') { <span class="material-symbols-outlined text-yellow-800 !text-4xl">chess_queen</span> }
+                  @case ('king') { <span class="material-symbols-outlined text-blue-800 !text-4xl">chess_king</span> }
+              }
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+            <div class="w-10 h-10 flex items-center justify-center drop-shadow-md">
+                @switch (currentLevel().target) {
+                    @case ('star') { <span class="material-symbols-outlined text-yellow-500 !text-4xl">star</span> }
+                    @case ('castle') { <span class="material-symbols-outlined text-red-800/70 !text-4xl">chess_rook</span> }
+                    @case ('crown') { <span class="material-symbols-outlined text-amber-500 !text-4xl">emoji_events</span> }
+                    @case ('diamond') { <span class="material-symbols-outlined text-sky-500 !text-4xl">diamond</span> }
+                    @case ('shield') { <span class="material-symbols-outlined text-gray-600 !text-4xl">shield</span> }
+                    @case ('home') { <span class="material-symbols-outlined text-green-600 !text-4xl">home</span> }
+                }
+            </div>
+          </div>
+          <p class="text-gray-600 mt-2 text-center lg:text-left w-full">{{ currentLevel().description }}</p>
+        </div>
+
+        <div class="w-full mt-2 text-center lg:text-left">
+          <h4 class="font-semibold text-gray-700">Progreso del Nivel:</h4>
+          <div class="flex items-center justify-center lg:justify-start gap-2 mt-1 bg-gray-200 p-2 rounded-lg">
+            @for (i of [].constructor(WINS_TO_UNLOCK); track $index) {
+              @if($index < getWinsForLevel(chessService.currentLevelIndex())) {
+                <span class="material-symbols-outlined text-red-500 !text-3xl">diamond</span>
+              } @else {
+                <span class="material-symbols-outlined text-gray-400 !text-3xl">diamond</span>
+              }
+            }
+            <span class="ml-auto font-bold text-gray-600">({{ getWinsForLevel(chessService.currentLevelIndex()) }} / {{ WINS_TO_UNLOCK }})</span>
+          </div>
+           @if (!isLevelUnlocked(chessService.currentLevelIndex() + 1) && chessService.currentLevelIndex() < levels.length -1) {
+            <p class="text-xs text-gray-500 mt-1">¡Gana {{ WINS_TO_UNLOCK - getWinsForLevel(chessService.currentLevelIndex()) }} más para desbloquear el siguiente!</p>
+          }
+        </div>
+
+        <button (click)="resetGame()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out flex items-center justify-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>¡Otro Juego!</span>
+        </button>
+
+        @if (chessService.currentLevelIndex() < levels.length - 1) {
+            <button (click)="skipLevel()" class="w-full bg-amber-400 hover:bg-amber-500 text-white font-semibold py-2 px-4 rounded-xl shadow-md transform hover:scale-105 transition-all duration-300 ease-in-out flex items-center justify-center gap-2 text-sm">
+                <span class="material-symbols-outlined">fast_forward</span>
+                <span>Saltar Nivel (Temp)</span>
+            </button>
+        }
+
+        <div class="w-full">
+          <button (click)="getPieceStory()" [disabled]="isLoading()" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            @if (isLoading()) {
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Pensando...</span>
+            } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              <span>Sobre {{ pieceNames[currentLevel().piece] }}</span>
+            }
+          </button>
+          @if (pieceStory(); as story) {
+            <div class="mt-3 p-3 bg-indigo-100 border border-indigo-200 rounded-lg text-sm text-indigo-800 animate-fade-in">
+              <p>{{ story }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+    
+  </main>
+
+  <footer class="text-center py-4 text-gray-500 text-sm">
+    Made with <span class="text-red-500">❤️</span> by David Castillo PhiConsulting
+  </footer>
+
+  <!-- Win Modal -->
+  @if (showWinModal()) {
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center animate-fade-in z-50">
+      <div class="bg-gradient-to-br from-yellow-300 to-orange-400 rounded-3xl p-8 text-center shadow-2xl transform scale-100 transition-transform duration-500 ease-out animate-jump-in max-w-sm mx-4">
+        <h2 class="text-4xl font-bold text-white drop-shadow-lg">¡Lo lograste, Jonathan!</h2>
+        <p class="text-2xl text-white/90 mt-2">¡Ese movimiento fue genial!</p>
+        
+        @if (currentReward(); as reward) {
+          <div class="my-6">
+             <img [src]="'https://unpkg.com/@google/angular-framework-assets@main/applet-assets/gems/' + reward + '.svg'" alt="Reward" class="w-48 h-48 mx-auto animate-bounce-slow" />
+          </div>
+        }
+        
+        <p class="text-xl font-semibold text-white/90 mb-6">¡Ganaste una piedra preciosa!</p>
+        
+        <button (click)="resetGame()" class="bg-white text-orange-500 font-bold py-3 px-8 rounded-full shadow-lg text-lg transform hover:scale-110 transition-transform duration-300">
+          ¡Jugar de Nuevo!
+        </button>
+      </div>
+    </div>
+  }
+</div>

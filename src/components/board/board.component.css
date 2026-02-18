@@ -1,0 +1,114 @@
+
+@keyframes jump-in {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  80% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ping-slow {
+  75%, 100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(-5%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes bobbing {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes twinkling {
+  0% {
+    filter: drop-shadow(0 0 2px #fef08a); /* yellow-200 */
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 6px #facc15); /* yellow-500 */
+    transform: scale(1.1);
+  }
+  100% {
+    filter: drop-shadow(0 0 2px #fef08a);
+    transform: scale(1);
+  }
+}
+
+@keyframes rook-slide {
+  0% {
+    transform: translateX(-5%);
+  }
+  50% {
+    transform: translateX(5%);
+  }
+  100% {
+    transform: translateX(-5%);
+  }
+}
+
+.animate-jump-in {
+  animation: jump-in 0.5s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.animate-ping-slow {
+  animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s infinite;
+}
+
+.animate-bobbing {
+  animation: bobbing 2.5s ease-in-out infinite;
+}
+
+.animate-twinkling {
+  animation: twinkling 2s ease-in-out infinite;
+}
+
+.animate-rook-slide {
+  animation: rook-slide 3s ease-in-out infinite;
+}
+
+/* Drag and Drop Styles */
+.dragging {
+  opacity: 0.4;
+}
+
+.square.drag-over {
+  background-color: rgba(135, 206, 250, 0.5) !important; /* Tailwind: bg-sky-300/50 */
+}
